@@ -2,9 +2,16 @@ FROM node:20-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Configure debconf to avoid interactive prompts and handle conffile conflicts
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
 # Add curl for health checks with proper dependency handling
+# Use -o Dpkg::Options::="--force-confdef" to use default for conffile prompts
+# Use -o Dpkg::Options::="--force-confold" to keep existing conffiles
 RUN apt-get update && \
     apt-get install -y --fix-missing --no-install-recommends \
+    -o Dpkg::Options::="--force-confdef" \
+    -o Dpkg::Options::="--force-confold" \
     curl \
     ca-certificates \
     && apt-get clean \
