@@ -16,6 +16,25 @@ export async function getDatabase() {
   return pool
 }
 
+// Export query function for compatibility
+export async function query(text: string, params?: any[]) {
+  const db = await getDatabase()
+  return db.query(text, params)
+}
+
+// Export ensureDatabaseReady function
+export async function ensureDatabaseReady() {
+  try {
+    const db = await getDatabase()
+    // Test connection with a simple query
+    await db.query('SELECT 1')
+    return true
+  } catch (error) {
+    console.error('Database readiness check failed:', error)
+    return false
+  }
+}
+
 async function initializeTables() {
   const client = await pool.connect()
   
