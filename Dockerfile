@@ -1,38 +1,28 @@
-FROM node:20-slim
+FROM node:20-alpine
 
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Configure debconf to avoid interactive prompts and handle conffile conflicts
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-
-# Add curl for health checks with proper dependency handling
-# Use -o Dpkg::Options::="--force-confdef" to use default for conffile prompts
-# Use -o Dpkg::Options::="--force-confold" to keep existing conffiles
-RUN apt-get update && \
-    apt-get install -y --fix-missing --no-install-recommends \
-    -o Dpkg::Options::="--force-confdef" \
-    -o Dpkg::Options::="--force-confold" \
-    curl \
-    ca-certificates \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# Install curl for health checks
+RUN apk add --no-cache curl
 
 WORKDIR /app
 
-# Remove any existing lock files
-RUN rm -f package-lock.json npm-shrinkwrap.json yarn.lock pnpm-lock.yaml
+# Copy package files and install dependencies
+COPY package.json ./
+RUN npm install --production=false
 
-COPY package*.json ./
-RUN npm install
-
+# Copy source code
 COPY . .
 
+# Build the application
 RUN npm run build
 
 # Create non-root user
-RUN groupadd -r nodejs && useradd -r -g nodejs nodejs
-RUN chown -R nodejs:nodejs /app
-USER nodejs
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+
+# Change ownership of the app directory
+USER root
+RUN chown -R nextjs:nodejs /app
+USER nextjs
 
 EXPOSE 3000
 
@@ -40,4 +30,4 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:3000/api/ready || exit 1
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "start"]
