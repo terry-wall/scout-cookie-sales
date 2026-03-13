@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
 import { getDatabase } from '@/lib/database'
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const db = await getDatabase()
