@@ -19,7 +19,7 @@ export default function OrderSummary({ items, onUpdateQuantity, onSubmit, isSubm
   if (items.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
+        <h3 className="text-xl font-semibold mb-4 text-gray-900">Order Summary</h3>
         <p className="text-gray-600">No items in order yet.</p>
       </div>
     )
@@ -27,13 +27,13 @@ export default function OrderSummary({ items, onUpdateQuantity, onSubmit, isSubm
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
+      <h3 className="text-xl font-semibold mb-4 text-gray-900">Order Summary</h3>
       
       <div className="space-y-3 mb-4">
         {items.map((item) => (
           <div key={item.productId} className="flex items-center justify-between py-2 border-b border-gray-200">
             <div className="flex-1">
-              <p className="font-medium">{item.productName}</p>
+              <p className="font-medium text-gray-900">{item.productName}</p>
               <p className="text-sm text-gray-600">{formatCurrency(item.unitPrice)} each</p>
             </div>
             
@@ -47,7 +47,7 @@ export default function OrderSummary({ items, onUpdateQuantity, onSubmit, isSubm
                 >
                   −
                 </button>
-                <span className="px-3 py-1 text-center min-w-[2rem]">{item.quantity}</span>
+                <span className="px-3 py-1 text-center min-w-[2rem] text-gray-900">{item.quantity}</span>
                 <button
                   type="button"
                   onClick={() => onUpdateQuantity(item.productId, item.quantity + 1)}
@@ -57,7 +57,7 @@ export default function OrderSummary({ items, onUpdateQuantity, onSubmit, isSubm
                 </button>
               </div>
               
-              <span className="font-semibold min-w-[4rem] text-right">
+              <span className="font-semibold min-w-[4rem] text-right text-gray-900">
                 {formatCurrency(item.unitPrice * item.quantity)}
               </span>
               
@@ -75,8 +75,8 @@ export default function OrderSummary({ items, onUpdateQuantity, onSubmit, isSubm
       
       <div className="border-t pt-4">
         <div className="flex justify-between items-center text-xl font-bold mb-4">
-          <span>Total:</span>
-          <span>{formatCurrency(getTotalAmount())}</span>
+          <span className="text-gray-900">Total:</span>
+          <span className="text-gray-900">{formatCurrency(getTotalAmount())}</span>
         </div>
         
         <button
